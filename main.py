@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import *
 from markupsafe import escape
-from device import lightOn, lightOff, dataRetrieve
+from device import feedOn, feedOff, latestDataRetrieve, allDataRetrieve
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
@@ -10,28 +10,28 @@ app.config["CORS_HEADERS"] = "Content_Type"
 
 @app.route("/")
 def hello():
-    return "<p> Hello </p>"
+    return "<h1> You're accessing Smart Garden API </h1>"
 
 
-@app.route("/data")
+@app.route("/api/test/data", methods=["GET"])
 def data():
-    return dataRetrieve()
+    isLastest = request.args.get("latest")
+    if isLastest in ["TRUE", "True", "true"] or isLastest == None:
+        return latestDataRetrieve()
+    elif isLastest in ["FALSE", "False", "false"]:
+        print(allDataRetrieve())
+        return allDataRetrieve()
+    else:
+        return f"Couldn't work with latest = {isLastest}"
 
 
-@app.route("/lightOn")
-def turnOnLight():
-    return lightOn()
-
-
-# return "<p>Turn On the Light!!</p>"
-
-
-@app.route("/lightOff")
-def turnOffLight():
-    return lightOff()
-    # return "<p>Turn Off the Light</p>"
-
-
-@app.route("/<name>")
-def abc(name):
-    return f"<h1>Error: {escape(name)} does not exist!</h1>"
+@app.route("/api/test", methods=["GET"])
+def actionRoute():
+    # param is the action you want to do with device
+    param = request.args.get("param")
+    if param == "ON" or param == "on" or param == "On":
+        return feedOn()
+    elif param == "OFF" or param == "Off" or param == "off":
+        return feedOff()
+    else:
+        return f"Couldn't work with param = {param}"

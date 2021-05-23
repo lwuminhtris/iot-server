@@ -16,7 +16,7 @@ data = aio.receive("test")
 print("Received value: {0}".format(data.value))
 """
 
-aio = Client("mitapari", "aio_kwOZ52nJ4Yp4sU9YdMlTnCeSIzoO")
+aio = Client("mitapari", "aio_LyIt57jRbeBfHM4EJ7YDpd2MOq5C")
 
 
 def connected(mqttClient):
@@ -36,7 +36,7 @@ def message(mqttClient, feed_id, payload):
     print("Feed {0} received new value: {1}".format(feed_id, payload))
 
 
-mqttClient = MQTTClient("mitapari", "aio_kwOZ52nJ4Yp4sU9YdMlTnCeSIzoO")
+mqttClient = MQTTClient("mitapari", "aio_LyIt57jRbeBfHM4EJ7YDpd2MOq5C")
 
 mqttClient.on_connect = connected
 mqttClient.on_disconnect = disconnected
@@ -47,20 +47,25 @@ mqttClient.connect()
 mqttClient.loop_background()
 
 
-def lightOn():
+def feedOn():
     param = "ON"
     mqttClient.publish("test", param)
     print("Publishing {} to sensor".format(param))
     return {"status": "OK", "description": param}
 
 
-def lightOff():
+def feedOff():
     param = "OFF"
     mqttClient.publish("test", param)
     print("Publishing {} to sensor".format(param))
     return {"status": "OK", "description": param}
 
 
-def dataRetrieve():
+def latestDataRetrieve():
     data = aio.receive(feed="test")
     return {"value": data.value}
+
+
+def allDataRetrieve():
+    data = data = aio.receive(feed="test")
+    return data
